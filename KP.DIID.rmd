@@ -1,0 +1,133 @@
+---
+title: "DIID"
+author: "KonstantinPopadin"
+date: "8/19/2024"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## 1 Read data, derive DeficitOfFragility
+
+```{r}
+# Set the file path
+file_path <- "2_Derived/Total_DIID_count.csv"
+data <- read.table(file_path, sep = ';', header = TRUE)
+
+# Display the first few rows of the data
+names(data)
+
+summary(data$DIIDFragilityScore)
+
+data$DIID.DeficitOfFragility = data$D.I..IDcount - data$DI..I.Dcount # ALTER - FRAGILE: the higher the score the higher the deficit of fragile elements ( due to potential selection)
+summary(data$DIID.DeficitOfFragility)
+```
+
+## 2 DIIDFragilityScore (==number of fragile / number of alternative structures)
+### we expect that FragilityScore should decrease (due to selection) in case of: 
+### (i) long repeats (so we expect negative correlations between FragilityScore and length);
+### (ii) short intervals 1 and 3 (so we expect positive correlations between FragilityScore and interval length)
+### in a set of univariate and multivariate analyses below we observe exactly this.
+
+```{r}
+
+summary(data$DirectRepeatLength)
+summary(data$InvertedRepeatLength)
+
+### UNIVARIATE WITH DIIDFragilityScore
+
+cor.test(data$DIIDFragilityScore,data$DirectRepeatLength, method = 'spearman')   
+plot(data$DIIDFragilityScore,data$DirectRepeatLength)
+
+cor.test(data$DIIDFragilityScore,data$InvertedRepeatLength, method = 'spearman') 
+plot(data$DIIDFragilityScore,data$InvertedRepeatLength)
+
+cor.test(data$DIIDFragilityScore,data$LengthOfInterval1, method = 'spearman') 
+plot(data$DIIDFragilityScore,data$LengthOfInterval1)
+
+cor.test(data$DIIDFragilityScore,data$LengthOfInterval2, method = 'spearman')
+plot(data$DIIDFragilityScore,data$LengthOfInterval2)
+
+cor.test(data$DIIDFragilityScore,data$LengthOfInterval3, method = 'spearman')
+plot(data$DIIDFragilityScore,data$LengthOfInterval3)
+
+### MULTIVARIATE
+
+summary(lm(data$DIIDFragilityScore ~ scale(data$DirectRepeatLength) + scale(data$InvertedRepeatLength) + scale(data$LengthOfInterval1) + scale(data$LengthOfInterval2) + scale(data$LengthOfInterval3)))
+
+summary(lm(data$DIIDFragilityScore ~ scale(data$DirectRepeatLength) + scale(data$InvertedRepeatLength) + scale(data$LengthOfInterval1) + scale(data$LengthOfInterval3)))
+
+```
+
+## 3 DIID.DeficitOfFragility (== number of alternative structures - number of fragile structures)
+### we expect that DeficitOfFragility (as a result of selection) should be more pronounced (stronger), when: 
+### (i) repeats are long  (so we expect positive correlations between DeficitOfFragility and length);
+### (ii) intervals 1 and 3 are short (so we expect negative correlations between DIID.DeficitOfFragility and interval length)
+### in a set of univariate (not always) and in multivariate analyses below we observe exactly this.
+
+```{r}
+cor.test(data$DIID.DeficitOfFragility,data$DirectRepeatLength, method = 'spearman')   
+plot(data$DIID.DeficitOfFragility,data$DirectRepeatLength)
+
+cor.test(data$DIID.DeficitOfFragility,data$InvertedRepeatLength, method = 'spearman') 
+plot(data$DIID.DeficitOfFragility,data$InvertedRepeatLength)
+
+cor.test(data$DIID.DeficitOfFragility,data$LengthOfInterval1, method = 'spearman') 
+plot(data$DIID.DeficitOfFragility,data$LengthOfInterval1)
+
+cor.test(data$DIID.DeficitOfFragility,data$LengthOfInterval2, method = 'spearman')
+plot(data$DIID.DeficitOfFragility,data$LengthOfInterval2)
+
+cor.test(data$DIID.DeficitOfFragility,data$LengthOfInterval3, method = 'spearman')
+plot(data$DIID.DeficitOfFragility,data$LengthOfInterval3)
+
+### MULTIVARIATE
+
+summary(lm(data$DIID.DeficitOfFragility ~ scale(data$DirectRepeatLength) + scale(data$InvertedRepeatLength) + scale(data$LengthOfInterval1) + scale(data$LengthOfInterval2) + scale(data$LengthOfInterval3)))
+
+summary(lm(data$DIID.DeficitOfFragility ~ scale(data$DirectRepeatLength) + scale(data$InvertedRepeatLength) + scale(data$LengthOfInterval1) + scale(data$LengthOfInterval3)))
+
+```
+
+## 4: DG4IIDFragilityScore (==number of fragile with GQ / number of alternative structures)
+### we expect that FragilityScore should decrease (due to selection) in case of: 
+### (i) long repeats (so we expect negative correlations between FragilityScore and length);
+### (ii) short intervals 1 and 3 (so we expect positive correlations between FragilityScore and interval length)
+### in a set of univariate and multivariate analyses below we observe exactly this.
+
+```{r}
+
+summary(data$DirectRepeatLength)
+summary(data$InvertedRepeatLength)
+summary(data$DG4IIDFragilityScore)
+
+### UNIVARIATE WITH DIIDFragilityScore
+
+cor.test(data$DG4IIDFragilityScore,data$DirectRepeatLength, method = 'spearman')   
+plot(data$DG4IIDFragilityScore,data$DirectRepeatLength)
+
+cor.test(data$DG4IIDFragilityScore,data$InvertedRepeatLength, method = 'spearman') 
+plot(data$DG4IIDFragilityScore,data$InvertedRepeatLength)
+
+cor.test(data$DG4IIDFragilityScore,data$LengthOfInterval1, method = 'spearman') 
+plot(data$DG4IIDFragilityScore,data$LengthOfInterval1)
+
+cor.test(data$DG4IIDFragilityScore,data$LengthOfInterval2, method = 'spearman')
+plot(data$DG4IIDFragilityScore,data$LengthOfInterval2)
+
+cor.test(data$DG4IIDFragilityScore,data$LengthOfInterval3, method = 'spearman')
+plot(data$DG4IIDFragilityScore,data$LengthOfInterval3)
+
+### MULTIVARIATE
+
+summary(lm(data$DG4IIDFragilityScore ~ scale(data$DirectRepeatLength) + scale(data$InvertedRepeatLength) + scale(data$LengthOfInterval1) + scale(data$LengthOfInterval2) + scale(data$LengthOfInterval3)))
+
+summary(lm(data$DG4IIDFragilityScore ~ scale(data$DirectRepeatLength) + scale(data$InvertedRepeatLength) + scale(data$LengthOfInterval1) + scale(data$LengthOfInterval3)))
+
+```
+
+
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
